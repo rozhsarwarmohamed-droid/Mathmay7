@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Unit 14.1 – Time | Grade 3 Math</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  /* ─── RESET & TOKENS ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --orange:  #FF6B35;
+    --blue:    #00B4D8;
+    --yellow:  #FFD166;
+    --pink:    #EF476F;
+    --green:   #06D6A0;
+    --purple:  #7B5EA7;
+    --dark:    #1A1A2E;
+    --mid:     #2E2E4A;
+    --light:   #FFF8F0;
+    --card-bg: #FFFFFF;
+    --border:  #E8DDD0;
+    --shadow:  0 4px 20px rgba(26,26,46,.12);
+    --radius:  18px;
+    --sidebar: 210px;
+    --header:  72px;
+    --font-head: 'Baloo 2', cursive;
+    --font-body: 'Nunito', sans-serif;
+  }
+
+  /* ─── LAYOUT SHELL ─── */
+  html { height: 100%; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--light);
+    color: var(--dark);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;           /* ← body scroll DISABLED */
+  }
+
+  /* ─── HEADER ─── */
+  #header {
+    flex-shrink: 0;
+    height: var(--header);
+    background: linear-gradient(135deg, var(--dark) 0%, var(--mid) 100%);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 24px;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,0,0,.3);
+  }
+  #header .logo {
+    width: 46px; height: 46px;
+    background: var(--yellow);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  #header .titles { flex: 1; }
+  #header .titles h1 {
+    font-family: var(--font-head);
+    font-size: 1.35rem; font-weight: 800;
+    color: #fff; line-height: 1.1;
+  }
+  #header .titles p {
+    font-size: .78rem; color: rgba(255,255,255,.6);
+    font-weight: 600; letter-spacing: .04em;
+  }
+  #header .badges { display: flex; gap: 8px; }
+  .hbadge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+  }
+  .hbadge.grade { background: var(--green); color: var(--dark); }
+  .hbadge.time  { background: var(--orange); color: #fff; }
+
+  /* ─── BODY ROW ─── */
+  #body-row {
+    flex: 1;
+    display: flex;
+    min-height: 0;           /* ← critical for nested scroll */
+  }
+
+  /* ─── SIDEBAR ─── */
+  #sidebar {
+    width: var(--sidebar);
+    flex-shrink: 0;
+    background: var(--dark);
+    display: flex;
+    flex-direction: column;
+    padding: 16px 10px;
+    gap: 4px;
+    overflow-y: scroll;
+    overscroll-behavior-y: contain;
+  }
+  #sidebar .sec-label {
+    font-size: .62rem;
+    font-weight: 800;
+    letter-spacing: .1em;
+    color: rgba(255,255,255,.3);
+    padding: 10px 8px 4px;
+    text-transform: uppercase;
+  }
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 11px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,.65);
+    font-family: var(--font-body);
+    font-size: .8rem;
+    font-weight: 700;
+    text-align: left;
+    transition: background .2s, color .2s, transform .15s;
+    width: 100%;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .nav-btn.active {
+    background: var(--orange);
+    color: #fff;
+    transform: translateX(3px);
+  }
+  .nav-btn .icon {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+    background: rgba(255,255,255,.1);
+  }
+  .nav-btn.active .icon { background: rgba(255,255,255,.25); }
+  .nav-btn .label { line-height: 1.2; }
+  .nav-btn .sub {
+    display: block;
+    font-size: .68rem;
+    font-weight: 600;
+    opacity: .7;
+  }
+  #sidebar .prog-bar {
+    margin-top: auto;
+    padding: 14px 8px 8px;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+  #sidebar .prog-bar p {
+    font-size: .68rem;
+    color: rgba(255,255,255,.4);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .prog-track {
+    height: 6px;
+    background: rgba(255,255,255,.12);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 99px;
+    transition: width .4s ease;
+    width: 0%;
+  }
+
+  /* ─── MAIN SCROLL AREA ─── */
+  #main {
+    flex: 1;
+    min-height: 0;           /* ← critical */
+    overflow-y: scroll;      /* ← scroll NOT auto */
+    overscroll-behavior-y: contain;
+    scroll-behavior: smooth;
+    padding: 28px 28px 0 28px;
+  }
+
+  /* ─── SECTIONS ─── */
+  .section { display: none; }
+  .section.active {
+    display: block;
+    animation: fadeSlide .35s ease;
+  }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SECTION HERO ─── */
+  .sec-hero {
+    border-radius: var(--radius);
+    padding: 26px 30px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .sec-hero .emoji { font-size: 3.2rem; flex-shrink: 0; }
+  .sec-hero h2 {
+    font-family: var(--font-head);
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.15;
+  }
+  .sec-hero p {
+    font-size: .92rem;
+    margin-top: 4px;
+    line-height: 1.5;
+    opacity: .85;
+  }
+
+  /* ─── QUESTION CARD ─── */
+  .q-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    transition: border-color .2s, transform .2s;
+  }
+  .q-card:hover { transform: translateY(-2px); }
+  .q-card.answered { border-color: var(--green); }
+
+  .q-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    border-bottom: 2px solid var(--light);
+  }
+  .q-badge {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .q-head h3 {
+    font-family: var(--font-head);
+    font-size: 1.05rem;
+    font-weight: 700;
+    flex: 1;
+    line-height: 1.4;
+  }
+
+  .q-body { padding: 18px 20px; }
+  .q-text {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--dark);
+    font-weight: 600;
+  }
+  .q-text strong { color: var(--orange); }
+  .q-text .highlight {
+    background: var(--yellow);
+    padding: 1px 5px;
+    border-radius: 5px;
+    font-weight: 800;
+  }
+
+  .q-tip {
+    margin-top: 12px;
+    background: #FFF3CD;
+    border-left: 4px solid var(--yellow);
+    border-radius: 0 10px 10px 0;
+    padding: 10px 14px;
+    font-size: .88rem;
+    color: #7A5C00;
+    font-weight: 600;
+  }
+  .q-tip strong { color: #5A4000; }
+
+  /* ─── ANSWER REVEAL ─── */
+  .reveal-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 20px 18px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 2px dashed var(--border);
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: .92rem;
+    font-weight: 700;
+    color: var(--blue);
+    transition: all .2s;
+  }
+  .reveal-btn:hover {
+    background: var(--blue);
+    color: #fff;
+    border-style: solid;
+    border-color: var(--blue);
+  }
+  .reveal-btn.revealed {
+    background: var(--green);
+    color: var(--dark);
+    border-style: solid;
+    border-color: var(--green);
+  }
+  .reveal-btn .btn-icon { font-size: 1.1rem; }
+
+  .answer-box {
+    display: none;
+    margin: 0 20px 18px;
+    background: linear-gradient(135deg, #E8FFF5, #D0F9EC);
+    border: 2px solid var(--green);
+    border-radius: 12px;
+    padding: 14px 18px;
+    animation: popIn .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .answer-box.show { display: block; }
+  @keyframes popIn {
+    from { transform: scale(.92); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+  }
+  .answer-box .ans-label {
+    font-size: .7rem;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #00875A;
+    margin-bottom: 5px;
+  }
+  .answer-box .ans-value {
+    font-family: var(--font-head);
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--dark);
+    line-height: 1.3;
+  }
+  .answer-box .ans-explain {
+    margin-top: 6px;
+    font-size: .84rem;
+    color: #005C3A;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .checkmark {
+    display: inline-block;
+    width: 22px; height: 22px;
+    background: var(--green);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 22px;
+    font-size: 13px;
+    color: #fff;
+    margin-right: 6px;
+  }
+
+  /* ─── MINI CALENDARS ─── */
+  .cal-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 14px 0;
+  }
+  .cal-wrap { flex: 1; min-width: 155px; }
+  .mini-cal {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .75rem;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  .mini-cal thead tr th.cal-title {
+    font-family: var(--font-head);
+    font-size: .82rem;
+    font-weight: 800;
+    color: #fff;
+    padding: 7px;
+    text-align: center;
+    letter-spacing: .03em;
+  }
+  .mini-cal thead tr.days-row th {
+    font-size: .68rem;
+    font-weight: 800;
+    padding: 4px 3px;
+    background: rgba(0,0,0,.15);
+    color: rgba(255,255,255,.9);
+    text-align: center;
+  }
+  .mini-cal tbody tr td {
+    text-align: center;
+    padding: 4px 3px;
+    font-weight: 600;
+    color: var(--dark);
+    background: #fff;
+  }
+  .mini-cal tbody tr td.empty { background: #f7f7f7; }
+  .mini-cal tbody tr td.today {
+    background: var(--yellow);
+    font-weight: 800;
+    border-radius: 6px;
+  }
+  .mini-cal tbody tr td.highlight-date {
+    background: var(--orange);
+    color: #fff;
+    font-weight: 800;
+    border-radius: 6px;
+  }
+  .mini-cal tbody tr td.highlight-end {
+    background: var(--pink);
+    color: #fff;
+    font-weight: 800;
+    border-radius: 6px;
+  }
+  .mini-cal tbody tr td.in-range {
+    background: rgba(6,214,160,.18);
+  }
+  .mini-cal tbody tr td.weekend { color: var(--pink); }
+
+  /* Calendar color themes */
+  .cal-jan  thead tr:first-child th { background: #FF9500; }
+  .cal-feb  thead tr:first-child th { background: #4CAF50; }
+  .cal-mar  thead tr:first-child th { background: #00B4D8; }
+  .cal-jun  thead tr:first-child th { background: #EF476F; }
+  .cal-jul  thead tr:first-child th { background: #7B5EA7; }
+  .cal-aug  thead tr:first-child th { background: #06D6A0; }
+  .cal-sep  thead tr:first-child th { background: #00B4D8; }
+  .cal-oct  thead tr:first-child th { background: #FF6B35; }
+  .cal-nov  thead tr:first-child th { background: #7B5EA7; }
+  .cal-apr  thead tr:first-child th { background: #7B5EA7; }
+
+  .cal-jan  thead tr.days-row th { background: #c97500; }
+  .cal-feb  thead tr.days-row th { background: #388e3c; }
+  .cal-mar  thead tr.days-row th { background: #0090b3; }
+  .cal-jun  thead tr.days-row th { background: #c0294f; }
+  .cal-jul  thead tr.days-row th { background: #5c4483; }
+  .cal-aug  thead tr.days-row th { background: #04a87d; }
+  .cal-sep  thead tr.days-row th { background: #0090b3; }
+  .cal-oct  thead tr.days-row th { background: #c95020; }
+  .cal-nov  thead tr.days-row th { background: #5c4483; }
+  .cal-apr  thead tr.days-row th { background: #5c4483; }
+
+  /* ─── OBJECTIVES LIST ─── */
+  .obj-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .obj-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .obj-list .obj-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  /* ─── VOCAB CHIPS ─── */
+  .vocab-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .vocab-chip {
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-family: var(--font-head);
+    font-size: .88rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* ─── DIVIDER LABEL ─── */
+  .div-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 24px 0 14px;
+    font-family: var(--font-head);
+    font-size: .82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: rgba(26,26,46,.4);
+  }
+  .div-label::before, .div-label::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    border-radius: 99px;
+  }
+
+  /* ─── MULTI-CARD ROW ─── */
+  .card-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .card-row .q-card { flex: 1; min-width: 260px; }
+
+  /* ─── BOTTOM PADDING SPACER ─── */
+  .bottom-spacer { height: 120px; flex-shrink: 0; }
+
+  /* ─── SCROLLBAR ─── */
+  #main::-webkit-scrollbar { width: 6px; }
+  #main::-webkit-scrollbar-track { background: transparent; }
+  #main::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 99px; }
+  #sidebar::-webkit-scrollbar { width: 3px; }
+  #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 99px; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 700px) {
+    :root { --sidebar: 60px; }
+    .nav-btn .label { display: none; }
+    .nav-btn .icon { margin: 0 auto; }
+    .nav-btn { justify-content: center; padding: 10px; }
+    #sidebar .sec-label { display: none; }
+    #sidebar .prog-bar p { display: none; }
+    #header .badges { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header id="header">
+  <div class="logo">🕐</div>
+  <div class="titles">
+    <h1>Unit 14.1 – Time (2)</h1>
+    <p>Cambridge Primary Mathematics · Chapter 14</p>
+  </div>
+  <div class="badges">
+    <span class="hbadge grade">Grade 3</span>
+    <span class="hbadge time">40 min</span>
+    <button onclick="revealAll()" style="padding:5px 13px;border-radius:20px;border:none;background:var(--pink);color:#fff;font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.03em;font-family:var(--font-body);">👁 All Answers</button>
+  </div>
+</header>
+
+<!-- ═══════════════ BODY ROW ═══════════════ -->
+<div id="body-row">
+
+  <!-- ── SIDEBAR ── -->
+  <nav id="sidebar">
+    <span class="sec-label">Sections</span>
+
+    <button class="nav-btn active" onclick="showSection('s0', this)">
+      <span class="icon">🎯</span>
+      <span class="label">Welcome<span class="sub">Objectives</span></span>
+    </button>
+    <button class="nav-btn" onclick="showSection('s1', this)">
+      <span class="icon">📅</span>
+      <span class="label">Q2<span class="sub">Jan / Feb / Mar</span></span>
+    </button>
+    <button class="nav-btn" onclick="showSection('s2', this)">
+      <span class="icon">✈️</span>
+      <span class="label">Q3<span class="sub">Travel Dates</span></span>
+    </button>
+    <button class="nav-btn" onclick="showSection('s3', this)">
+      <span class="icon">🌟</span>
+      <span class="label">Q3d & Q4a<span class="sub">Birthdays & Days</span></span>
+    </button>
+    <button class="nav-btn" onclick="showSection('s4', this)">
+      <span class="icon">📚</span>
+      <span class="label">Q4b & Q4c<span class="sub">Holiday Days</span></span>
+    </button>
+    <button class="nav-btn" onclick="showSection('s5', this)">
+      <span class="icon">🧳</span>
+      <span class="label">Q5<span class="sub">April Calendar</span></span>
+    </button>
+    <button class="nav-btn" onclick="showSection('s6', this)">
+      <span class="icon">🎢</span>
+      <span class="label">Q6<span class="sub">Rollercoaster</span></span>
+    </button>
+
+    <div class="prog-bar">
+      <p id="prog-text">0 / 14 answered</p>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+  </nav>
+
+  <!-- ══════════════ MAIN SCROLL ══════════════ -->
+  <main id="main">
+
+    <!-- ▓▓▓ SECTION 0 – WELCOME ▓▓▓ -->
+    <section class="section active" id="s0">
+      <div class="sec-hero" style="background:linear-gradient(135deg,#1A1A2E,#2E2E4A); color:#fff;">
+        <div class="emoji">🕐</div>
+        <div>
+          <h2 style="color:#fff;">Welcome to Time!</h2>
+          <p style="color:rgba(255,255,255,.75);">Today we explore calendars, dates, days, weeks, months, and years.</p>
+        </div>
+      </div>
+
+      <!-- Objectives -->
+      <div class="q-card">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--purple);">🎯</div>
+          <h3>Learning Objectives</h3>
+        </div>
+        <div class="q-body">
+          <ul class="obj-list">
+            <li>
+              <div class="obj-icon" style="background:#FFF3CD;">📏</div>
+              Choose the right unit of time for different activities (minutes, hours, days, weeks, months, years).
+            </li>
+            <li>
+              <div class="obj-icon" style="background:#E8FFF5;">🗓️</div>
+              Read a calendar and count the days <strong>between</strong> two dates correctly.
+            </li>
+            <li>
+              <div class="obj-icon" style="background:#FFE8EE;">🧮</div>
+              Calculate time intervals — adding and subtracting weeks and days.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Key Vocab -->
+      <div class="q-card">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--blue);">📖</div>
+          <h3>Key Vocabulary</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">These are the important words for today:</p>
+          <div class="vocab-grid">
+            <span class="vocab-chip" style="background:var(--orange);">calendar</span>
+            <span class="vocab-chip" style="background:var(--blue);">date</span>
+            <span class="vocab-chip" style="background:var(--green);">days between</span>
+            <span class="vocab-chip" style="background:var(--pink);">weeks</span>
+            <span class="vocab-chip" style="background:var(--purple);">months</span>
+            <span class="vocab-chip" style="background:var(--orange);">years</span>
+            <span class="vocab-chip" style="background:var(--blue);">interval</span>
+            <span class="vocab-chip" style="background:var(--green);">duration</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tip Card -->
+      <div class="q-card">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--yellow); color:var(--dark);">💡</div>
+          <h3>Important Reminder!</h3>
+        </div>
+        <div class="q-body">
+          <div class="q-tip" style="font-size:.95rem;">
+            <strong>Days BETWEEN two dates:</strong> Do <strong>NOT</strong> count the two dates themselves.<br/><br/>
+            Example: Days between Monday and Wednesday = just Tuesday = <strong>1 day</strong>.
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </section>
+
+    <!-- ▓▓▓ SECTION 1 – Q2 (Jan / Feb / Mar) ▓▓▓ -->
+    <section class="section" id="s1">
+      <div class="sec-hero" style="background:linear-gradient(135deg,#FF9500,#FF6B35); color:#fff;">
+        <div class="emoji">📅</div>
+        <div>
+          <h2>Question 2 — Using a Calendar</h2>
+          <p>Use the January, February &amp; March calendars to find the answers.</p>
+        </div>
+      </div>
+
+      <!-- Calendars -->
+      <div class="cal-group">
+        <!-- JANUARY -->
+        <div class="cal-wrap">
+          <table class="mini-cal cal-jan">
+            <thead>
+              <tr><th colspan="7" class="cal-title">January</th></tr>
+              <tr class="days-row"><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td>1</td><td class="weekend">2</td><td class="weekend">3</td></tr>
+              <tr><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td class="weekend">9</td><td class="weekend">10</td></tr>
+              <tr><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td class="weekend">16</td><td class="weekend">17</td></tr>
+              <tr><td>18</td><td>19</td><td>20</td><td>21</td><td class="highlight-date">22</td><td class="weekend">23</td><td class="weekend">24</td></tr>
+              <tr><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td><td class="weekend">30</td><td class="weekend">31</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- FEBRUARY -->
+        <div class="cal-wrap">
+          <table class="mini-cal cal-feb">
+            <thead>
+              <tr><th colspan="7" class="cal-title">February</th></tr>
+              <tr class="days-row"><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td class="weekend">6</td><td class="weekend">7</td></tr>
+              <tr><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td class="weekend">13</td><td class="weekend">14</td></tr>
+              <tr><td>15</td><td>16</td><td>17</td><td class="highlight-end">18</td><td>19</td><td class="weekend">20</td><td class="weekend">21</td></tr>
+              <tr><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td class="weekend">27</td><td class="weekend">28</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- MARCH -->
+        <div class="cal-wrap">
+          <table class="mini-cal cal-mar">
+            <thead>
+              <tr><th colspan="7" class="cal-title">March</th></tr>
+              <tr class="days-row"><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td class="weekend">6</td><td class="weekend">7</td></tr>
+              <tr><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td class="weekend">13</td><td class="weekend">14</td></tr>
+              <tr><td>15</td><td>16</td><td class="highlight-date">17</td><td>18</td><td>19</td><td class="weekend">20</td><td class="weekend">21</td></tr>
+              <tr><td class="highlight-end">22</td><td>23</td><td>24</td><td>25</td><td>26</td><td class="weekend">27</td><td class="weekend">28</td></tr>
+              <tr><td>29</td><td>30</td><td>31</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="div-label">Questions</div>
+
+      <!-- Q2a -->
+      <div class="q-card" id="card-2a">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--orange);">2a</div>
+          <h3>How many days are <strong>between</strong> 22nd January and 18th February?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">Look at the <span class="highlight" style="background:var(--orange);color:#fff;">🟠 22 Jan</span> (start) and <span class="highlight" style="background:var(--pink);color:#fff;">🩷 18 Feb</span> (end).<br/>
+          Count the days in between — <strong>do not count those two days!</strong></p>
+          <div class="q-tip"><strong>Hint:</strong> Count remaining January days + February days up to (but not including) the 18th.</div>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-2a', this, 'card-2a')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-2a">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">26 days</div>
+          <div class="ans-explain">Jan 23–31 = <strong>9 days</strong> &nbsp;+&nbsp; Feb 1–17 = <strong>17 days</strong> &nbsp;= &nbsp;<strong>26 days</strong> total.</div>
+        </div>
+      </div>
+
+      <!-- Q2b -->
+      <div class="q-card" id="card-2b">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--blue);">2b</div>
+          <h3>What is the date <strong>three weeks</strong> after 1st March?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">3 weeks = <strong>21 days</strong>.<br/>Start at March 1st and count forward 21 days.</p>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-2b', this, 'card-2b')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-2b">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">22nd March</div>
+          <div class="ans-explain">1 March + 21 days = <strong>22nd March</strong>. (Look at the orange square on the March calendar!)</div>
+        </div>
+      </div>
+
+      <!-- Q2c -->
+      <div class="q-card" id="card-2c">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--green);">2c</div>
+          <h3>Carnival day is 17th March. Plans are made <strong>six weeks before</strong>. What date do they start planning?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">6 weeks = <strong>42 days</strong>.<br/>Go <em>backwards</em> 42 days from 17th March.</p>
+          <div class="q-tip"><strong>Hint:</strong> 17 March → go back 17 days = 1 March, then go back 25 more days into February.</div>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-2c', this, 'card-2c')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-2c">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">3rd February</div>
+          <div class="ans-explain">42 days before 17 Mar: go back 17 days → Mar 1, then 25 more days → Feb 3rd.</div>
+        </div>
+      </div>
+
+      <!-- Q2d -->
+      <div class="q-card" id="card-2d-a">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--pink);">2d</div>
+          <h3>Zalika plans a holiday to last <strong>three weeks</strong>. She leaves on 19th January. When does she arrive back?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">3 weeks = <strong>21 days</strong>.<br/>Add 21 days to 19th January.</p>
+          <div class="q-tip"><strong>Hint:</strong> January has 31 days. 31 − 19 = 12 days left in January. Then continue into February.</div>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-2d-a', this, 'card-2d-a')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-2d-a">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">9th February</div>
+          <div class="ans-explain">19 Jan + 12 days = 31 Jan, then 9 more days → <strong>9th February</strong>.</div>
+        </div>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </section>
+
+    <!-- ▓▓▓ SECTION 2 – Q3 (Travel) ▓▓▓ -->
+    <section class="section" id="s2">
+      <div class="sec-hero" style="background:linear-gradient(135deg,#00B4D8,#0077A8); color:#fff;">
+        <div class="emoji">✈️</div>
+        <div>
+          <h2>Question 3 — Travel &amp; Stays</h2>
+          <p>Use what you know about days, nights, and weeks.</p>
+        </div>
+      </div>
+
+      <!-- Q3a -->
+      <div class="q-card" id="card-3a">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--blue);">3a</div>
+          <h3>Many airlines ask you to buy a ticket <strong>14 days before</strong> your flight. If Thandiwe leaves on <strong>20th June</strong>, on what day should he buy his ticket?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">Count <strong>14 days backwards</strong> from 20th June.</p>
+          <div class="q-tip"><strong>Hint:</strong> 20 − 14 = ?</div>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-3a', this, 'card-3a')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-3a">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">Monday, 6th June</div>
+          <div class="ans-explain">20 − 14 = 6th June. Looking at the June 2022 calendar, the 6th is a <strong>Monday</strong>.</div>
+        </div>
+      </div>
+
+      <!-- Q3b -->
+      <div class="q-card" id="card-3b">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--orange);">3b</div>
+          <h3>Misha arrives at the hotel on <strong>8th July</strong> and will stay <strong>three nights</strong>. What date will Misha check out?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">If you arrive on the 8th and sleep <strong>3 nights</strong>, you leave on the morning of day 4.</p>
+          <div class="q-tip"><strong>Hint:</strong> Night 1 = 8th, Night 2 = 9th, Night 3 = 10th. Check-out = ?</div>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-3b', this, 'card-3b')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-3b">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">11th July</div>
+          <div class="ans-explain">Arrive 8 July, 3 nights (8th, 9th, 10th) → Check out on <strong>11th July</strong>.</div>
+        </div>
+      </div>
+
+      <!-- Q3c -->
+      <div class="q-card" id="card-3c">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--green);">3c</div>
+          <h3>Abida turns <strong>seven</strong> on 11th September. Jim turns <strong>seven</strong> on 18th September. How many days <strong>older</strong> is Abida?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">Both turn 7 in September. Abida's birthday is first.<br/>How many days are between 11th Sept and 18th Sept?</p>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-3c', this, 'card-3c')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-3c">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">Abida is 7 days older</div>
+          <div class="ans-explain">18 − 11 = <strong>7 days</strong>. Abida was born 7 days before Jim, so she is 7 days older.</div>
+        </div>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </section>
+
+    <!-- ▓▓▓ SECTION 3 – Q3d & Q4a ▓▓▓ -->
+    <section class="section" id="s3">
+      <div class="sec-hero" style="background:linear-gradient(135deg,#7B5EA7,#5A4080); color:#fff;">
+        <div class="emoji">🌟</div>
+        <div>
+          <h2>Q3d &amp; Q4a — Birthdays &amp; Days Between</h2>
+          <p>Working with years and large date intervals.</p>
+        </div>
+      </div>
+
+      <!-- Q3d -->
+      <div class="q-card" id="card-3d">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--purple);">3d</div>
+          <h3>Stefania will be <strong>13 years old</strong> on 7th October 2023. In what year was she born? How old will she be on 7th October 2030?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">
+            <strong>Part 1:</strong> If she is 13 in 2023, subtract to find her birth year.<br/>
+            <strong>Part 2:</strong> If she was born that year, how old in 2030?
+          </p>
+          <div class="q-tip"><strong>Hint:</strong> Birth year = 2023 − 13. Then 2030 − birth year = age in 2030.</div>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-3d', this, 'card-3d')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-3d">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">Born in 2010 &nbsp;·&nbsp; Age 20 in 2030</div>
+          <div class="ans-explain">2023 − 13 = <strong>2010</strong> (birth year). &nbsp; 2030 − 2010 = <strong>20 years old</strong>.</div>
+        </div>
+      </div>
+
+      <!-- Q4a header -->
+      <div class="div-label">Question 4a — June to November 2022</div>
+
+      <!-- Calendar legend -->
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;align-items:center;">
+        <span style="font-size:.78rem;font-weight:800;color:rgba(26,26,46,.5);text-transform:uppercase;letter-spacing:.06em;">Calendar key:</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:.8rem;font-weight:700;"><span style="width:18px;height:18px;background:var(--orange);border-radius:5px;display:inline-block;"></span> Start date (3 Jun)</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:.8rem;font-weight:700;"><span style="width:18px;height:18px;background:rgba(6,214,160,.35);border-radius:5px;display:inline-block;"></span> Days in between (count these!)</span>
+        <span style="display:flex;align-items:center;gap:5px;font-size:.8rem;font-weight:700;"><span style="width:18px;height:18px;background:var(--pink);border-radius:5px;display:inline-block;"></span> End date (25 Nov)</span>
+      </div>
+
+      <!-- June-November calendars -->
+      <div class="cal-group">
+        <div class="cal-wrap">
+          <table class="mini-cal cal-jun">
+            <thead>
+              <tr><th colspan="7" class="cal-title">June 2022</th></tr>
+              <tr class="days-row"><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th></tr>
+            </thead>
+            <tbody>
+              <!-- June 1, 2022 = Wednesday (W column) -->
+              <tr><td class="empty"></td><td class="empty"></td><td>1</td><td>2</td><td class="highlight-date">3</td><td class="in-range weekend">4</td><td class="in-range weekend">5</td></tr>
+              <tr><td class="in-range">6</td><td class="in-range">7</td><td class="in-range">8</td><td class="in-range">9</td><td class="in-range">10</td><td class="in-range weekend">11</td><td class="in-range weekend">12</td></tr>
+              <tr><td class="in-range">13</td><td class="in-range">14</td><td class="in-range">15</td><td class="in-range">16</td><td class="in-range">17</td><td class="in-range weekend">18</td><td class="in-range weekend">19</td></tr>
+              <tr><td class="in-range">20</td><td class="in-range">21</td><td class="in-range">22</td><td class="in-range">23</td><td class="in-range">24</td><td class="in-range weekend">25</td><td class="in-range weekend">26</td></tr>
+              <tr><td class="in-range">27</td><td class="in-range">28</td><td class="in-range">29</td><td class="in-range">30</td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cal-wrap">
+          <table class="mini-cal cal-jul">
+            <thead>
+              <tr><th colspan="7" class="cal-title">July 2022</th></tr>
+              <tr class="days-row"><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="in-range">1</td><td class="in-range weekend">2</td><td class="in-range weekend">3</td></tr>
+              <tr><td class="in-range">4</td><td class="in-range">5</td><td class="in-range">6</td><td class="in-range">7</td><td class="in-range">8</td><td class="in-range weekend">9</td><td class="in-range weekend">10</td></tr>
+              <tr><td class="in-range">11</td><td class="in-range">12</td><td class="in-range">13</td><td class="in-range">14</td><td class="in-range">15</td><td class="in-range weekend">16</td><td class="in-range weekend">17</td></tr>
+              <tr><td class="in-range">18</td><td class="in-range">19</td><td class="in-range">20</td><td class="in-range">21</td><td class="in-range">22</td><td class="in-range weekend">23</td><td class="in-range weekend">24</td></tr>
+              <tr><td class="in-range">25</td><td class="in-range">26</td><td class="in-range">27</td><td class="in-range">28</td><td class="in-range">29</td><td class="in-range weekend">30</td><td class="in-range weekend">31</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cal-wrap">
+          <table class="mini-cal cal-aug">
+            <thead>
+              <tr><th colspan="7" class="cal-title">August 2022</th></tr>
+              <tr class="days-row"><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="in-range">1</td><td class="in-range">2</td><td class="in-range">3</td><td class="in-range">4</td><td class="in-range">5</td><td class="in-range weekend">6</td><td class="in-range weekend">7</td></tr>
+              <tr><td class="in-range">8</td><td class="in-range">9</td><td class="in-range">10</td><td class="in-range">11</td><td class="in-range">12</td><td class="in-range weekend">13</td><td class="in-range weekend">14</td></tr>
+              <tr><td class="in-range">15</td><td class="in-range">16</td><td class="in-range">17</td><td class="in-range">18</td><td class="in-range">19</td><td class="in-range weekend">20</td><td class="in-range weekend">21</td></tr>
+              <tr><td class="in-range">22</td><td class="in-range">23</td><td class="in-range">24</td><td class="in-range">25</td><td class="in-range">26</td><td class="in-range weekend">27</td><td class="in-range weekend">28</td></tr>
+              <tr><td class="in-range">29</td><td class="in-range">30</td><td class="in-range">31</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="cal-group">
+        <div class="cal-wrap">
+          <table class="mini-cal cal-sep">
+            <thead>
+              <tr><th colspan="7" class="cal-title">September 2022</th></tr>
+              <tr class="days-row"><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="in-range">1</td><td class="in-range">2</td><td class="in-range weekend">3</td><td class="in-range weekend">4</td></tr>
+              <tr><td class="in-range">5</td><td class="in-range">6</td><td class="in-range">7</td><td class="in-range">8</td><td class="in-range">9</td><td class="in-range weekend">10</td><td class="in-range weekend">11</td></tr>
+              <tr><td class="in-range">12</td><td class="in-range">13</td><td class="in-range">14</td><td class="in-range">15</td><td class="in-range">16</td><td class="in-range weekend">17</td><td class="in-range weekend">18</td></tr>
+              <tr><td class="in-range">19</td><td class="in-range">20</td><td class="in-range">21</td><td class="in-range">22</td><td class="in-range">23</td><td class="in-range weekend">24</td><td class="in-range weekend">25</td></tr>
+              <tr><td class="in-range">26</td><td class="in-range">27</td><td class="in-range">28</td><td class="in-range">29</td><td class="in-range">30</td><td class="empty"></td><td class="empty"></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cal-wrap">
+          <table class="mini-cal cal-oct">
+            <thead>
+              <tr><th colspan="7" class="cal-title">October 2022</th></tr>
+              <tr class="days-row"><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="in-range weekend">1</td><td class="in-range weekend">2</td></tr>
+              <tr><td class="in-range">3</td><td class="in-range">4</td><td class="in-range">5</td><td class="in-range">6</td><td class="in-range">7</td><td class="in-range weekend">8</td><td class="in-range weekend">9</td></tr>
+              <tr><td class="in-range">10</td><td class="in-range">11</td><td class="in-range">12</td><td class="in-range">13</td><td class="in-range">14</td><td class="in-range weekend">15</td><td class="in-range weekend">16</td></tr>
+              <tr><td class="in-range">17</td><td class="in-range">18</td><td class="in-range">19</td><td class="in-range">20</td><td class="in-range">21</td><td class="in-range weekend">22</td><td class="in-range weekend">23</td></tr>
+              <tr><td class="in-range">24</td><td class="in-range">25</td><td class="in-range">26</td><td class="in-range">27</td><td class="in-range">28</td><td class="in-range weekend">29</td><td class="in-range weekend">30</td></tr>
+              <tr><td class="in-range">31</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cal-wrap">
+          <table class="mini-cal cal-nov">
+            <thead>
+              <tr><th colspan="7" class="cal-title">November 2022</th></tr>
+              <tr class="days-row"><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th></tr>
+            </thead>
+            <tbody>
+              <!-- Nov 1, 2022 = Tuesday (T column) -->
+              <tr><td class="empty"></td><td class="in-range">1</td><td class="in-range">2</td><td class="in-range">3</td><td class="in-range">4</td><td class="in-range weekend">5</td><td class="in-range weekend">6</td></tr>
+              <tr><td class="in-range">7</td><td class="in-range">8</td><td class="in-range">9</td><td class="in-range">10</td><td class="in-range">11</td><td class="in-range weekend">12</td><td class="in-range weekend">13</td></tr>
+              <tr><td class="in-range">14</td><td class="in-range">15</td><td class="in-range">16</td><td class="in-range">17</td><td class="in-range">18</td><td class="in-range weekend">19</td><td class="in-range weekend">20</td></tr>
+              <tr><td class="in-range">21</td><td class="in-range">22</td><td class="in-range">23</td><td class="in-range">24</td><td class="highlight-end">25</td><td class="weekend">26</td><td class="weekend">27</td></tr>
+              <tr><td>28</td><td>29</td><td>30</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Q4a -->
+      <div class="q-card" id="card-4a">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--pink);">4a</div>
+          <h3>How many days are there <strong>between</strong> 3rd June 2022 and 25th November 2022?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">The <span class="highlight" style="background:var(--orange);color:#fff;">orange</span> date marks 3rd June (start — not counted), the <span class="highlight" style="background:var(--pink);color:#fff;">pink</span> date marks 25th November (end — not counted). The <span class="highlight" style="background:rgba(6,214,160,.3);color:var(--dark);">green</span> dates in between are what we count.</p>
+          <div class="q-tip"><strong>Hint:</strong> Add up: remaining June days + all of July + August + September + October + November days up to (not including) 25th.</div>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-4a', this, 'card-4a')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-4a">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">174 days</div>
+          <div class="ans-explain">
+            Jun 4–30 = <strong>27</strong> &nbsp;+&nbsp; Jul = <strong>31</strong> &nbsp;+&nbsp; Aug = <strong>31</strong> &nbsp;+&nbsp; Sep = <strong>30</strong> &nbsp;+&nbsp; Oct = <strong>31</strong> &nbsp;+&nbsp; Nov 1–24 = <strong>24</strong> &nbsp;= &nbsp;<strong>174 days</strong>.
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </section>
+
+    <!-- ▓▓▓ SECTION 4 – Q4b & Q4c ▓▓▓ -->
+    <section class="section" id="s4">
+      <div class="sec-hero" style="background:linear-gradient(135deg,#06D6A0,#04A87D); color:var(--dark);">
+        <div class="emoji">📚</div>
+        <div>
+          <h2>Q4b &amp; Q4c — Ages &amp; Holiday Lengths</h2>
+          <p>Working with birth years and comparing durations.</p>
+        </div>
+      </div>
+
+      <!-- Q4b -->
+      <div class="q-card" id="card-4b">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--green); color:var(--dark);">4b</div>
+          <h3>Daniel was born on <strong>10th January 2003</strong>. How old will he be on his birthday in <strong>2018</strong>?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">To find someone's age: subtract their birth year from the current year.</p>
+          <div class="q-tip"><strong>Hint:</strong> 2018 − 2003 = ?</div>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-4b', this, 'card-4b')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-4b">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">15 years old</div>
+          <div class="ans-explain">2018 − 2003 = <strong>15</strong>. Daniel will be 15 on his birthday in 2018.</div>
+        </div>
+      </div>
+
+      <!-- Q4c -->
+      <div class="q-card" id="card-4c">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--blue);">4c</div>
+          <h3>Lily's holiday: <strong>9th May – 21st May</strong>.<br/>Song's holiday starts <strong>12th May</strong> and lasts <strong>2 weeks</strong>.<br/>Whose holiday is longer — and by how many days?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">
+            <strong>Lily:</strong> Count the days between 9th and 21st May.<br/>
+            <strong>Song:</strong> 2 weeks = 14 days.
+          </p>
+          <div class="q-tip"><strong>Hint:</strong> Days between 9th and 21st May — do not count the 9th and 21st themselves.</div>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-4c', this, 'card-4c')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-4c">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">Song's holiday is longer by 2 days</div>
+          <div class="ans-explain">
+            Lily: 9–21 May = <strong>12 days</strong> (May 10–20). &nbsp; Song: 2 weeks = <strong>14 days</strong>. &nbsp; 14 − 12 = <strong>2 days</strong> longer for Song.
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </section>
+
+    <!-- ▓▓▓ SECTION 5 – Q5 (April) ▓▓▓ -->
+    <section class="section" id="s5">
+      <div class="sec-hero" style="background:linear-gradient(135deg,#EF476F,#C4254D); color:#fff;">
+        <div class="emoji">🧳</div>
+        <div>
+          <h2>Question 5 — April Adventures</h2>
+          <p>Use the April calendar to solve these tricky problems.</p>
+        </div>
+      </div>
+
+      <!-- April Calendar -->
+      <div class="cal-group">
+        <div class="cal-wrap" style="max-width:280px;">
+          <table class="mini-cal cal-apr" style="font-size:.85rem;">
+            <thead>
+              <tr><th colspan="7" class="cal-title" style="font-size:.95rem;">April</th></tr>
+              <tr class="days-row"><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="empty"></td><td>1</td><td>2</td><td>3</td><td>4</td><td class="weekend">5</td><td class="weekend">6</td></tr>
+              <tr><td class="highlight-date">7</td><td>8</td><td>9</td><td>10</td><td>11</td><td class="weekend">12</td><td class="weekend">13</td></tr>
+              <tr><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td class="highlight-end weekend">19</td><td class="weekend">20</td></tr>
+              <tr><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td class="weekend">26</td><td class="weekend">27</td></tr>
+              <tr><td class="highlight-end">28</td><td>29</td><td>30</td><td class="empty"></td><td class="empty"></td><td class="empty"></td><td class="empty"></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="flex:1; min-width:180px;">
+          <div class="q-tip" style="margin:0; border-radius:12px; padding:14px 16px; font-size:.88rem;">
+            <strong>🗓️ Reading the Calendar:</strong><br/><br/>
+            The <strong>orange 7</strong> = packed suitcase day (Q5a).<br/>
+            The <strong>pink 19</strong> = arrive home (Q5a).<br/>
+            The <strong>pink 28</strong> = friend goes home (Q5b).
+          </div>
+        </div>
+      </div>
+
+      <div class="div-label">Questions</div>
+
+      <!-- Q5a -->
+      <div class="q-card" id="card-5a">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--purple);">5a</div>
+          <h3>I packed a suitcase on <strong>7th April</strong> to visit my grandma in <strong>three days' time</strong>. I will stay for <strong>nine days</strong>. What day and date will I get home?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">
+            <strong>Step 1:</strong> I leave in 3 days from April 7th → depart on April 10th.<br/>
+            <strong>Step 2:</strong> I stay for 9 days starting April 10th → arrive home on April 19th.
+          </p>
+          <div class="q-tip"><strong>Hint:</strong> 7 + 3 = depart day. Depart day + 9 = home day. Find the day of the week!</div>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-5a', this, 'card-5a')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-5a">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">Saturday, 19th April</div>
+          <div class="ans-explain">Leave Apr 10 (Thursday). Stay 9 days: Apr 10, 11, 12, 13, 14, 15, 16, 17, 18 → home on <strong>19th April</strong>. Looking at the calendar: 19th is a Saturday.</div>
+        </div>
+      </div>
+
+      <!-- Q5b -->
+      <div class="q-card" id="card-5b">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--pink);">5b</div>
+          <h3>My friend was coming to stay on <strong>16th April</strong> for three days. She was ill and couldn't come for <strong>another week</strong>. Then she stayed for <strong>5 days</strong>. What day and date did she go home?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">
+            <strong>Step 1:</strong> Original date 16th + 1 week = new arrival date.<br/>
+            <strong>Step 2:</strong> New arrival + 5 days = she goes home.
+          </p>
+          <div class="q-tip"><strong>Hint:</strong> 16 + 7 = new start. New start + 5 = go home date. Find the day of the week!</div>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-5b', this, 'card-5b')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-5b">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">Monday, 28th April</div>
+          <div class="ans-explain">New arrival: 16 + 7 = <strong>23rd April</strong>. Stays 5 days: 23, 24, 25, 26, 27 → goes home <strong>28th April</strong>. Looking at the calendar: 28th is a <strong>Monday</strong>.</div>
+        </div>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </section>
+
+    <!-- ▓▓▓ SECTION 6 – Q6 (Rollercoaster) ▓▓▓ -->
+    <section class="section" id="s6">
+      <div class="sec-hero" style="background:linear-gradient(135deg,#FFD166,#FF9500); color:var(--dark);">
+        <div class="emoji">🎢</div>
+        <div>
+          <h2>Question 6 — The Rollercoaster!</h2>
+          <p>Think carefully — both children need to be old enough!</p>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="q-card" id="card-6">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--orange);">6</div>
+          <h3>Only children aged <strong>10 and above</strong> can ride the rollercoaster. Nabil is <strong>8</strong> years old and Gina is <strong>9</strong> years old. How many years do they have to wait until they can <strong>both</strong> ride together?</h3>
+        </div>
+        <div class="q-body">
+          <p class="q-text">
+            <strong>Nabil:</strong> is 8 years old → needs to be 10 → must wait <strong>2 years</strong>.<br/>
+            <strong>Gina:</strong> is 9 years old → needs to be 10 → must wait <strong>1 year</strong>.<br/><br/>
+            For them to ride <strong>together</strong>, we need to wait until <em>both</em> are old enough.<br/>
+            Who takes longer to reach 10?
+          </p>
+          <div class="q-tip"><strong>Key word: BOTH.</strong> They can only ride together when the <em>youngest</em> (Nabil) is also 10. That decides the wait time.</div>
+        </div>
+        <button class="reveal-btn" onclick="reveal('ans-6', this, 'card-6')">
+          <span class="btn-icon">👁️</span> Show Answer
+        </button>
+        <div class="answer-box" id="ans-6">
+          <div class="ans-label"><span class="checkmark">✓</span> Answer</div>
+          <div class="ans-value">Wait 2 years</div>
+          <div class="ans-explain">
+            Nabil (8) needs 2 years to reach 10. Gina (9) only needs 1 year, but they must wait for <strong>Nabil too</strong>. 
+            After 2 years: Nabil = 10 ✓ &nbsp; Gina = 11 ✓ &nbsp; → <strong>Both can ride! 🎢</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Card -->
+      <div class="q-card" style="border:2px solid var(--yellow);">
+        <div class="q-head">
+          <div class="q-badge" style="background:var(--yellow); color:var(--dark);">🏆</div>
+          <h3>Answer Summary — All Questions</h3>
+        </div>
+        <div class="q-body">
+          <table style="width:100%; border-collapse:collapse; font-size:.88rem; font-weight:600;">
+            <thead>
+              <tr style="background:var(--dark); color:#fff;">
+                <th style="padding:8px 10px; border-radius:8px 0 0 0; text-align:left;">Q</th>
+                <th style="padding:8px 10px; text-align:left;">Question</th>
+                <th style="padding:8px 10px; border-radius:0 8px 0 0; text-align:left; color:var(--yellow);">Answer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#fff;"><td style="padding:7px 10px; color:var(--orange);">2a</td><td style="padding:7px 10px;">Days between 22 Jan – 18 Feb</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">26 days</td></tr>
+              <tr style="background:#f9f5ff;"><td style="padding:7px 10px; color:var(--orange);">2b</td><td style="padding:7px 10px;">3 weeks after 1 Mar</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">22nd March</td></tr>
+              <tr style="background:#fff;"><td style="padding:7px 10px; color:var(--orange);">2c</td><td style="padding:7px 10px;">6 weeks before 17 Mar</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">3rd February</td></tr>
+              <tr style="background:#f9f5ff;"><td style="padding:7px 10px; color:var(--orange);">2d</td><td style="padding:7px 10px;">19 Jan + 3 weeks</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">9th February</td></tr>
+              <tr style="background:#fff;"><td style="padding:7px 10px; color:var(--blue);">3a</td><td style="padding:7px 10px;">14 days before 20 Jun</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">Mon, 6th June</td></tr>
+              <tr style="background:#f9f5ff;"><td style="padding:7px 10px; color:var(--blue);">3b</td><td style="padding:7px 10px;">8 Jul + 3 nights</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">11th July</td></tr>
+              <tr style="background:#fff;"><td style="padding:7px 10px; color:var(--blue);">3c</td><td style="padding:7px 10px;">Abida vs Jim birthdays</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">7 days older</td></tr>
+              <tr style="background:#f9f5ff;"><td style="padding:7px 10px; color:var(--purple);">3d</td><td style="padding:7px 10px;">Stefania born? Age in 2030?</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">2010 · 20 yrs old</td></tr>
+              <tr style="background:#fff;"><td style="padding:7px 10px; color:var(--pink);">4a</td><td style="padding:7px 10px;">3 Jun – 25 Nov 2022</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">174 days</td></tr>
+              <tr style="background:#f9f5ff;"><td style="padding:7px 10px; color:var(--green);">4b</td><td style="padding:7px 10px;">Daniel's age in 2018</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">15 years old</td></tr>
+              <tr style="background:#fff;"><td style="padding:7px 10px; color:var(--green);">4c</td><td style="padding:7px 10px;">Lily vs Song's holiday</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">Song, by 2 days</td></tr>
+              <tr style="background:#f9f5ff;"><td style="padding:7px 10px; color:var(--purple);">5a</td><td style="padding:7px 10px;">Grandma visit — go home?</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">Sat, 19th April</td></tr>
+              <tr style="background:#fff;"><td style="padding:7px 10px; color:var(--pink);">5b</td><td style="padding:7px 10px;">Friend goes home?</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">Mon, 28th April</td></tr>
+              <tr style="background:#f9f5ff;"><td style="padding:7px 10px; color:var(--orange);">6</td><td style="padding:7px 10px;">Rollercoaster wait</td><td style="padding:7px 10px; color:var(--green); font-weight:800;">2 years</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="bottom-spacer"></div>
+    </section>
+
+  </main><!-- end #main -->
+</div><!-- end #body-row -->
+
+<script>
+  // ─── Section Navigation ───
+  function showSection(id, btn) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    document.getElementById('main').scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ─── Answer Reveal ───
+  let answeredCount = 0;
+  const totalAnswers = 14;
+
+  function reveal(ansId, btn, cardId) {
+    const box = document.getElementById(ansId);
+    const card = document.getElementById(cardId);
+    const isShowing = box.classList.contains('show');
+
+    if (!isShowing) {
+      box.classList.add('show');
+      btn.classList.add('revealed');
+      btn.innerHTML = '<span class="btn-icon">✅</span> Answer Shown';
+      if (card && !card.classList.contains('answered')) {
+        card.classList.add('answered');
+        answeredCount++;
+        updateProgress();
+      }
+    } else {
+      box.classList.remove('show');
+      btn.classList.remove('revealed');
+      btn.innerHTML = '<span class="btn-icon">👁️</span> Show Answer';
+    }
+  }
+
+  // ─── Reveal All (teacher button) ───
+  function revealAll() {
+    document.querySelectorAll('.answer-box').forEach(box => box.classList.add('show'));
+    document.querySelectorAll('.reveal-btn').forEach(btn => {
+      btn.classList.add('revealed');
+      btn.innerHTML = '<span class="btn-icon">✅</span> Answer Shown';
+    });
+    document.querySelectorAll('.q-card').forEach(card => card.classList.add('answered'));
+    answeredCount = totalAnswers;
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const pct = Math.round((answeredCount / totalAnswers) * 100);
+    document.getElementById('prog-fill').style.width = pct + '%';
+    document.getElementById('prog-text').textContent =
+      answeredCount + ' / ' + totalAnswers + ' answered';
+  }
+</script>
+</body>
+</html>
